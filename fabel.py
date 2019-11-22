@@ -188,16 +188,15 @@ def module_iframe_finder(driver, site):
 
 def main():
 
-        driver_accepter = webdriver.Firefox()
+        driver_acceptor = webdriver.Firefox()
         driver_iframe_finder = webdriver.Firefox()
-        driver_accepter.get(info.adbrainer_url)
+        driver_acceptor.get(info.adbrainer_url)
         sites = read_list(path.sites_path)
-
         for i in range(54090, len(sites)):
             print(str(i) + ' ' + info.base_url + sites[i])
             site_ads = module_similar_tech(sites[i])
             if len(site_ads) != 0 and site_ads[1] != 'none':
-                flag_accept = module_accepter(driver_accepter, site_ads[0])
+                flag_accept = module_accepter(driver_acceptor, site_ads[0])
                 if flag_accept == True:
                     flag_iframe = module_iframe_finder(driver_iframe_finder, site_ads[0])
                     if flag_iframe == 'aswift':
@@ -217,7 +216,7 @@ def main():
                             f.write('\n')
             if i % 100 == 0:
                 clear_tabs(driver_iframe_finder)
-
+                print('')
 
 
 path = Path()
