@@ -192,7 +192,7 @@ def main():
     driver_acceptor.get(info.adbrainer_url)
     sites = read_list(path.sites_path)
     try:
-        for i in range(91049, len(sites)):
+        for i in range(91803, len(sites)):
             print(str(i) + ' ' + info.base_url + sites[i])
             site_ads = module_similar_tech(sites[i])
             if len(site_ads) != 0 and site_ads[1] != 'none':
