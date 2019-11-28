@@ -3,4 +3,4 @@ src/
 venv/
 .idea/
 .json
-.log
+geckodriver.log
