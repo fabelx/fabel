@@ -1,3 +1,6 @@
+tools/
 src/
 venv/
 .idea/
+.json
+.log
