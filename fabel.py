@@ -1,7 +1,7 @@
 import requests
 from selenium import webdriver
 import time
-
+# Gold version 1.0.3
 
 class Info:
     headers = {'accept': '*/*',
