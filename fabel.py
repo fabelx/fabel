@@ -1,7 +1,63 @@
 import requests
 from selenium import webdriver
 import time
+import mysql.connector
+from mysql.connector import Error
+
+
 # Gold version 1.0.3
+
+
+class DataBase:
+    def __init__(self, host, user, password, database):
+        self._host = host
+        self._user = user
+        self._password = password
+        self._database = database
+
+    def connect_to_db(self):
+        connector_db = None
+        try:
+            connector_db = mysql.connector.connect(
+                host=self._host,
+                user=self._user,
+                passwd=self._password,
+                database=self._database
+            )
+        except Error as er:
+            print(er)
+        return connector_db
+
+    def insert_new_domain(self, connector_db, value):
+        try:
+            cursor_db = connector_db.cursor()
+            sql_query = "INSERT INTO domains (domain) VALUES (%s)"
+            cursor_db.execute(sql_query, (str(value).lower(),))
+            connector_db.commit()
+        except mysql.connector.errors.IntegrityError as er:
+            print(er)
+        except mysql.connector.errors.DataError as er:
+            print(er)
+        return 0
+
+    def insert_into_db(self, connector_db, column, domain, value):
+        try:
+            cursor_db = connector_db.cursor()
+            sql_query = "UPDATE domains SET " + column + " = %s WHERE domain = %s"
+            cursor_db.execute(sql_query, (value, str(domain).lower(),))
+            connector_db.commit()
+        except mysql.connector.errors.DatabaseError as er:
+            print(er)
+        return 0
+
+
+# db = DataBase('localhost', 'root', 'root01', 'fabel')
+# connector_db = db.connect_to_db()
+# if connector_db is not None:
+#     with open('./src/lib/list_of_websites.txt') as f:
+#         for line in f:
+#             db.insert_new_domain(connector_db, line.strip())
+
 
 class Info:
     headers = {'accept': '*/*',
@@ -11,26 +67,27 @@ class Info:
                        'Accept': 'application/json, text/javascript, */*; q=0.01',
                        'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
                        'Accept-Encoding': 'gzip, deflate, br',
-                       'X-Request-Verification-Token': 'bUWOpt9OrQVwizrAQnVwz03RHTfO5V-Sdja8p_o65SBgouiRnjl1GSBJfgAHTa4zizQd-tgLvf0mjt00DIrVohs6zZUrCxy83SeTCU8CpRx_nRBU0',
+                       'X-Request-Verification-Token': 'atyVD7vDW6DetJMF7CNR5w_4KX0x987N8ENUm_WgSc1xtI7Zi-jFKsqbXgJ6sQ6ZJoyNOjhKv8cBM3Ya4aCbFnmgQCn67YkOuvMdOv8CEBiq8r0Z0',
                        'X-Requested-With': 'XMLHttpRequest',
                        'DNT': '1',
                        'Connection': 'keep-alive',
                        'Referer': 'https://www.similartech.com/dashboard/websites/analysis/url/techrepublic.com'}
-    cookies_simtech = {"__hssc": "34316798.1.1574880032305", "__hssrc": "1",
-                       "__hstc": "34316798.9b887398279677df0f007dee45c44667.1574693381336.1574693381336.1574880032305.2",
-                       "__RequestVerificationToken": "imXVBryPoQaU0IF2zfna9HRWP4Ytucs-OArAxoCKd945dPG6_2wyD3jNPiQ0J_xOvRVSv6DvdOk3U5AsOgASMH20j3s1",
-                       "_fbp": "fb.1.1574693368403.1205247694", "_ga": "GA1.2.1384714940.1574693378", "_gat": "1",
-                       "_gid": "GA1.2.1229183313.1574880028",
-                       "_lr_hb_-eiz3eg/similartech": "{\"heartbeat\":1574880049408}",
-                       "_lr_tabs_-eiz3eg/similartech": "{\"sessionID\":0,\"recordingID\":\"2-85f9083d-7c5f-46f1-9bbf-74f1b7e04995\",\"lastActivity\":1574880049406}",
-                       "_lr_uf_-eiz3eg/similartech": "457dc9a2-4431-4f1d-9fc6-26dcc6d9538e",
-                       ".SAUTH": "1BC1D0E00C3F09D6C4A230616570AEF93588F7CE0291163962E9F82EBB7EB556A75181FFE61298A0485A58A7E71848D80D63C23BB3FB46FDF02CE2432335A85C6C6665E83785487A46D81DAF634781740F599A5AFBA49D0ACBCDD570CC47017B2A202D8A06599B587C220D8AC75D2341B8A3C646D75825B695ABB1D3E423AA2B7C2604DCE60902391C782B03F76EB02909AD777D",
+    cookies_simtech = {"__hssc": "34316798.3.1577211617180", "__hssrc": "1",
+                       "__hstc": "34316798.8fb01c1eb2f72727a9c4674b1250472f.1577211617179.1577211617179.1577211617179.1",
+                       "__RequestVerificationToken": "T14gPSr5_V2hrEv9Y2HHM9xnlsaq6WRPsqbvoi5teQLxEdEChaDgRe4CTXMNihMCApYmz3J_0ZxZsEhLX-a4I0BJ2w81",
+                       "_fbp": "fb.1.1577211617044.1275765947", "_ga": "GA1.2.502283780.1577211617", "_gat": "1",
+                       "_gid": "GA1.2.1773445000.1577211617",
+                       "_lr_hb_-eiz3eg/similartech": "{\"heartbeat\":1577211685905}",
+                       "_lr_tabs_-eiz3eg/similartech": "{\"sessionID\":0,\"recordingID\":\"3-0975d0fc-17b6-4b4f-b5b5-d9ebab8bd78b\",\"lastActivity\":1577211685902}",
+                       "_lr_uf_-eiz3eg/similartech": "85e94927-1a6e-445d-987e-5e83795536a2",
+                       ".SAUTH": "59FFE4F54F76F1F1B736E90382E875FD6D1FC6ED030C52F32066D4639F64529FC496C5BC01C37FE5C3165EAEEA6D7FCA1A7B460EC386B875D8E6223448E04544ADF491E0ADC1D4FA3C22BE58738EC576663572574F212ED70D50FA7155B1134C05D9697FD29A065DC6714416F2B19E552EA39484902708065F47B7B64297D189F37848C25D8381E59840E14F3886705C0912F4D4",
                        "cookieconsent_status": "dismiss", "hsfirstvisit": "",
-                       "hubspotutk": "9b887398279677df0f007dee45c44667", "initialLP": "/account/register",
+                       "hubspotutk": "8fb01c1eb2f72727a9c4674b1250472f",
+                       "initialLP": "/account/login?ReturnUrl=/dashboard/websites/analysis/url/www.cnn.com",
                        "initialReferrer": "",
-                       "intercom-session-v16ho3zr": "aGRCMzRMVmdQOGtnUW9uM2RTYVNSelZSN3h3S25uNUYxMjZNNG1sRHBZOGlCRlBmWkVpRnNjNEM2NW53SGpZbS0tclBQNXdmTHNFTlA0NlNiay96Tlhmdz09--ecde84f59dae77b727fa4cbc9eefe11a20afc405",
-                       "sessionLP": "/account/register", "sessionReferrer": "",
-                       "SGSS": "a4c9f75f-42fa-4ed2-92ad-d7f9e1925a07"}
+                       "intercom-session-v16ho3zr": "OTF1SXczZGh4eWowZ0FtZHFTcWw3aVI1VEZGRzVVNUlsVGdMUG0rWE5veUNZaTNEKzlpQUtrUkQxS0hJR09IZi0tNEZ1YXBCcmpGS0JUdkNhcmZTYnlDZz09--3a98f83de2ad6a3dd88379f5b70e07114792e8ed",
+                       "sessionLP": "/account/login?ReturnUrl=/dashboard/websites/analysis/url/www.cnn.com",
+                       "sessionReferrer": "", "SGSS": "61c9fb49-3d5c-4c64-8150-87507e9f76f2"}
 
     base_url = 'https://www.similartech.com/api/websites/analysis?site='
     adbrainer_url = 'https://dashboard.adbrainer.com/main/dashboard?token=f0fe34639af4c2587ec33f37346e15ba'
@@ -191,7 +248,7 @@ def main():
     driver_acceptor.get(info.adbrainer_url)
     sites = read_list(path.sites_path)
     try:
-        for i in range(len(sites)):
+        for i in range(9237, len(sites)):
             print(str(i) + ' ' + info.base_url + sites[i])
             site_ads = module_similar_tech(sites[i])
             if len(site_ads) != 0 and site_ads[1] != 'none':
@@ -224,4 +281,4 @@ def main():
 path = Path()
 info = Info()
 
-main()
+# main()
