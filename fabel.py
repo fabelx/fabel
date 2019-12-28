@@ -15,7 +15,7 @@ class DataBase:
         self._password = password
         self._database = database
 
-    def connect_to_db(self):
+    def _connect_to_db(self):
         connector_db = None
         try:
             connector_db = mysql.connector.connect(
@@ -25,11 +25,13 @@ class DataBase:
                 database=self._database
             )
         except Error as er:
-            print(er)
+            print('Fatal error ' + str(er))
+            exit()
         return connector_db
 
-    def insert_new_domain(self, connector_db, value):
+    def insert_new_domain(self, value):
         try:
+            connector_db = self._connect_to_db()
             cursor_db = connector_db.cursor()
             sql_query = "INSERT INTO domains (domain) VALUES (%s)"
             cursor_db.execute(sql_query, (str(value).lower(),))
@@ -40,24 +42,43 @@ class DataBase:
             print(er)
         return 0
 
-    def insert_into_db(self, connector_db, column, domain, value):
+    def insert_into_db(self, column, domain, value):
         try:
+            connector_db = self._connect_to_db()
             cursor_db = connector_db.cursor()
-            sql_query = "UPDATE domains SET " + column + " = %s WHERE domain = %s"
+            sql_query = "UPDATE domains SET " + column + " = %s WHERE domain LIKE %s"
             cursor_db.execute(sql_query, (value, str(domain).lower(),))
             connector_db.commit()
         except mysql.connector.errors.DatabaseError as er:
             print(er)
         return 0
 
+    def select_from_db(self, columns, requirement, limit):
+        connector_db = self._connect_to_db()
+        cursor_db = connector_db.cursor()
+        result = None
+        try:
+            sql_query = "SELECT " + columns + " FROM domains " + requirement + "LIMIT " + str(limit)
+            cursor_db.execute(sql_query)
+            result = cursor_db.fetchall()
+        except mysql.connector.errors.ProgrammingError as er:
+            print(er)
+        except mysql.connector.errors.InterfaceError as er:
+            print(er)
+        return result
 
-# db = DataBase('localhost', 'root', 'root01', 'fabel')
-# connector_db = db.connect_to_db()
-# if connector_db is not None:
+
+# def load_new_domains():
+#     db = DataBase('localhost', 'root', 'root01', 'fabel')
 #     with open('./src/lib/list_of_websites.txt') as f:
 #         for line in f:
-#             db.insert_new_domain(connector_db, line.strip())
+#             db.insert_new_domain(line.strip())
 
+class Website:
+    def request(self, url, headers, cookies):
+        session = requests.session()
+        response = session.get(url, headers=headers, cookies=cookies)
+        return response
 
 class Info:
     headers = {'accept': '*/*',
