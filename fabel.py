@@ -1,16 +1,14 @@
-import requests
-from selenium import webdriver
-import time
-import mysql.connector
-from mysql.connector import Error as MysqlError
-import smtplib
-import dns.resolver
-import sys
 import re
+import smtplib
+import sys
+import time
+
+import dns.resolver
+import mysql.connector
+import requests
 from bs4 import BeautifulSoup as bs
-
-
-# Gold version 1.0.3
+from mysql.connector import Error as MysqlError
+from selenium import webdriver
 
 
 class DataBase:
@@ -346,14 +344,14 @@ def main():
             if website.get_monthly_visits(response) > 20000:
                 db.insert_into_db('monthly_visits', domains[i], 'more_20thnd')
                 if website.check_existence_in_adbrainer(adbrainer_web_driver, domains[i]) is True:
-                    emails = website.get_emails(response)
-                    valid_emails = [email for email in emails if mail.validate_email(email) == 250]
-                    if valid_emails:
-                        db.insert_into_db('emails', domains[i], ' '.join(valid_emails))
                     advert = website.get_advertising(response)
                     if advert:
                         if advert[0] == 'added':
                             db.insert_into_db('advertising', domains[i], 'y')
+                            emails = website.get_emails(response)
+                            valid_emails = [email for email in emails if mail.validate_email(email) == 250]
+                            if valid_emails:
+                                db.insert_into_db('emails', domains[i], ' '.join(valid_emails))
                             advrtsmnt.find_advertisement(advertisement_web_driver, domains[i])
                             if i % 100 == 0:
                                 advrtsmnt.clear_tabs(advertisement_web_driver)
@@ -374,7 +372,6 @@ def main():
 
 if __name__ == '__main__':
     # main()
-
     def load_new_domains():
         db = DataBase('localhost', 'root', 'root01', 'fabel', 'domains')
         with open('./src/trash/loaded.txt') as f:
