@@ -5,6 +5,7 @@ import requests
 import json
 from selenium import webdriver
 import fabel
+import time
 
 sys.path.append(os.getcwd())
 
@@ -55,6 +56,8 @@ class TestWebsite(unittest.TestCase):
     # def test_web_driver_for_checking_existence(self):
     #     website = fabel.Website()
     #     web_driver = website.run_web_driver_for_adbrainer()
+    #     time.sleep(5)
+    #     self.assertEqual(website.check_existence_in_adbrainer(web_driver, 'kkk'), None)
     #     # self.assertEqual(website.run_web_driver_for_adbrainer(), None)
     #     self.assertEqual(website.check_existence_in_adbrainer(web_driver, 'werhdtfgjhm'), True)
     #     self.assertEqual(website.check_existence_in_adbrainer(web_driver, 'mobtada.com'), False)
