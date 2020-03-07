@@ -19,7 +19,7 @@ console_handler.setFormatter(logger_form)
 
 
 class DataBase:
-    __slots__ = ['_host', '_user', '_password', '_database', '_table']
+    __slots__ = ('_host', '_user', '_password', '_database', '_table',)
 
     def __init__(self, host, user, password, database, table):
         self._host = host
@@ -80,13 +80,14 @@ class DataBase:
 
 class Website:
     __slots__ = ('_headers', '_key_words', '_country_flags', '_adbrainer_url', '_bad_mail_names', 'simtech_headers',
-                 'simtech_cookies', 'simtech_ajax_url',)
+                 'simtech_cookies', 'simtech_ajax_url', '_bad_country_flags',)
 
     def __init__(self):
         self._headers = {'accept': '*/*',
                          'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0'}
         self._key_words = ('added', 'removed',)
         self._country_flags = ('UK', 'US', 'CA', 'AU', 'NZ',)
+        self._bad_country_flags = ('CN', 'BD',)
         self._adbrainer_url = 'https://dashboard.adbrainer.com/main/dashboard?token=f0fe34639af4c2587ec33f37346e15ba'
         self._bad_mail_names = ('abuse', 'noreply', 'no-reply', 'legal',)
         self.simtech_headers = {'Host': 'www.similartech.com',
@@ -94,25 +95,20 @@ class Website:
                                 'Accept': 'application/json, text/javascript, */*; q=0.01',
                                 'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
                                 'Accept-Encoding': 'gzip, deflate, br',
-                                'X-Request-Verification-Token': 'SZgnBSdhhxTsUtzaRU78oLUJiJkBdg_TeNJJVk9QU619h8Q-J9vRay7z6XeyqWpWD__lw2yllB-p0HQYPk1B3YWjINcC_Z82xoATRHReOSJRBLmP0',
+                                'X-Request-Verification-Token': 'JRRUwY6F9Dt-tDGd9WYmrhDOGwaYX7zfo10NNsdq08TCxmfVVLXoBxyMhrejZWW7ZAt2ZNbGp86QS_k14AUcDjzbcR4aCMHPdLyzq-Lbsx5V3m0n0',
                                 'X-Requested-With': 'XMLHttpRequest',
                                 'DNT': '1',
                                 'Connection': 'keep-alive',
                                 'Referer': 'https://www.similartech.com/dashboard/websites/analysis/url/techrepublic.com'}
-        self.simtech_cookies = {"__hssc": "34316798.4.1580856130890", "__hssrc": "1",
-                                "__hstc": "34316798.94a23b56acfee603730f8e44417b0c08.1579809519056.1580591612468.1580856130890.10",
-                                "__RequestVerificationToken": "uLaSTDUNKBnd_H8lupKC6YyirVLlBGCAll4QeOWw7s5dAnWvl1Er9-_EDMGM6g1i1WSdXNZ5BRYSwUOeX2xVhWdy7wQ1",
-                                "_fbp": "fb.1.1579809518768.1462952688", "_ga": "GA1.2.2021661463.1579809518",
-                                "_gid": "GA1.2.374016372.1580856122",
-                                "_lr_hb_-eiz3eg/similartech": "{\"heartbeat\":1580856238787}",
-                                "_lr_tabs_-eiz3eg/similartech": "{\"sessionID\":0,\"recordingID\":\"4-3db14c4b-fd02-4707-899c-927b5c7e9c3b\",\"lastActivity\":1580856238785}",
-                                "_lr_uf_-eiz3eg/similartech": "7a96aea3-10bd-47a9-846c-6550ac35ff3c",
-                                ".SAUTH": "60052A4B66EE9AC9F3B631B3F8E7E7A21C3AFECAC78E49508C98B6F5AFFBFEE95B776E09878C372EDE9DE97E662E15896D2EB58433A9E9DF3A9292D06ED683030AF4F2520D864DF9E55E2A14B565B57802607E99A4745C43E5A24ADD55E7839051CE769F5A2B4AF57D9FC95942F83E6CA84883F25714E1261B79EA91DD3361AB4BFB8AA9C319127A42948388E9BDEE6F2E8CA550",
+        self.simtech_cookies = {"__hssc": "34316798.4.1582931738811", "__hssrc": "1",
+                                "__hstc": "34316798.216d97b46808af3d69aeef29dde0d74a.1582931738811.1582931738811.1582931738811.1",
+                                "__RequestVerificationToken": "k-F4nWsmicPA_xC6xgOxnOtFFZ9DuhpfKUqP50dz5T-ME98kOde_KHsp0o6cOlN6PcCpVUjvRIC1RWWqY-0xyW4pzkw1",
+                                "_ga": "GA1.2.1975797809.1582931738", "_gat": "1", "_gid": "GA1.2.567801510.1582931738",
+                                ".SAUTH": "F8B699DFC4504369102396CCC68192EE289F31519C31D0C8F481B6D1D92771257CC5882561FF77D948D636235F1C2FB79071865DA40601B894AB56FCF6E609B38FE3A929A36FFB83B9876B9B1C965DA593644F2C1DCC4890D7BF71ADD6738DEA4C587269BFDF2377211D650A81FA69AE327446615C1F9AAD0650666BFC2FD46DC23E00DC9FCC741CA61ECD2D21671D6352FA0DD6",
                                 "cookieconsent_status": "dismiss", "hsfirstvisit": "",
-                                "hubspotutk": "94a23b56acfee603730f8e44417b0c08", "initialLP": "/",
-                                "initialReferrer": "",
-                                "intercom-session-v16ho3zr": "M2ptUVFTZm13NzI2c05DTzREa3IvcG9yWEs0SE5KcDFWMlhZcTJ3aHpFWXdhSjdaak9VSGpvL1hBdEY0Ym1qZC0tazFEWkQ0OFBiWWtPWi92eFh6V2lkZz09--f10931964e5de568067cd845fb15fd3d712c0853",
-                                "sessionLP": "/", "sessionReferrer": "", "SGSS": "39e92c69-91e0-4478-81bf-23f88578e11a"}
+                                "hubspotutk": "216d97b46808af3d69aeef29dde0d74a", "initialLP": "/",
+                                "initialReferrer": "", "sessionLP": "/", "sessionReferrer": "",
+                                "SGSS": "e0e42fd7-a727-4f7b-9999-16256ffc9b06"}
         self.simtech_ajax_url = 'https://www.similartech.com/api/websites/analysis?site='
 
     @staticmethod
@@ -129,6 +125,7 @@ class Website:
     @staticmethod
     def get_monthly_visits(response):
         month_visits = response.json()['discover']['info']['monthlyVisits']
+        print(str(month_visits))
         return month_visits
 
     def get_country_flag(self, database, response, domain):
@@ -136,8 +133,13 @@ class Website:
             country_flag = response.json()['discover']['info']['countryFlag']
             if country_flag in self._country_flags:
                 database.insert_into_db('country_flag', domain, 'y', '')
+                return True
+            if country_flag in self._bad_country_flags:
+                return False
+            return True
         except (ValueError, KeyError) as er:
             logger.error(er)
+            return True
 
     @staticmethod
     def get_facebook_url(database, response, domain):
@@ -151,7 +153,7 @@ class Website:
         try:
             emails = response.json()['discover']['emails']['roleBasedEmails']
             emails = [emails[i] for i in range(len(emails)) if
-                      i < 7 and emails[i].split('@')[0] not in self._bad_mail_names]
+                      i < 4 and emails[i].split('@')[0] not in self._bad_mail_names]
             return emails
         except (ValueError, KeyError) as er:
             logger.error(er)
@@ -212,13 +214,12 @@ class Website:
 
 
 class Email(Website):
-    __slots__ = ['database', '_base_email_address', '_key_words']
+    __slots__ = ('database', '_base_email_address', '_key_words',)
 
     def __init__(self, database):
         super().__init__()
         self.database = database
-        self._base_email_address = 'corn@bt.com'
-        self._key_words = ['contact', 'advertise', 'kontak', 'contat']
+        self._base_email_address = 'gigini7709@mailmink.com'
 
     @staticmethod
     def _get_mx_record(domain):
@@ -245,8 +246,6 @@ class Email(Website):
             return 250
         except TimeoutError as er:
             logger.error(er)
-            with open('D:/Vlad/My Project/fabel/src/validation/valid.txt', 'a') as f:
-                f.write(email_address + '\n')
             return 1000
         except Exception as er:
             logger.error(er, exc_info=True)
@@ -267,7 +266,7 @@ class Email(Website):
 
 
 class Advertisement:
-    __slots__ = ['database']
+    __slots__ = ('database',)
 
     def __init__(self, database):
         self.database = database
@@ -331,10 +330,10 @@ def main():
     advertisement_web_driver = webdriver.Firefox()
     adbrainer_web_driver = mail.run_web_driver_for_adbrainer()
     domains = [row[0] for row in db.select_from_db('domain', "WHERE existence = 'y' and "
-                                                             "advertising = 'y' and "
                                                              "status = 'unchecked' and "
-                                                             "googleads = 'n' and "
-                                                             "country_flag = 'y' "
+                                                             "googleads = 'y' and "
+                                                             "advertising = 'y' and "
+                                                             "emails = 'none' "
                                                              "LIMIT 40000")]
     domains = tuple(domains)
     for i in range(len(domains)):
@@ -347,24 +346,27 @@ def main():
             except AttributeError as er:
                 logger.error(er)
         if response:
-            if website.get_monthly_visits(response) > 20000:
-                if website.get_monthly_visits(response) > 100000:
-                    db.insert_into_db('monthly_visits', domains[i], 'more_100thnd', '')
-                    website.get_country_flag(db, response, domains[i])
+            monthly_visits = website.get_monthly_visits(response)
+            if monthly_visits > 100000 and website.get_country_flag(db, response, domains[i]):
+                if 500000 > monthly_visits > 150000:
+                    db.insert_into_db('monthly_visits', domains[i], 'more_150thnd', '')
+                elif monthly_visits > 500000:
+                    db.insert_into_db('monthly_visits', domains[i], 'more_500thnd', '')
                 else:
-                    db.insert_into_db('monthly_visits', domains[i], 'more_20thnd', '')
+                    db.insert_into_db('monthly_visits', domains[i], 'more_100thnd', '')
                 adbrainer_web_driver = website.check_web_driver_existing(adbrainer_web_driver)
                 if website.check_existence_in_adbrainer(adbrainer_web_driver, domains[i]) is True:
                     advert = website.get_advertising(response)
                     if advert:
                         if advert[0] == 'added':
                             db.insert_into_db('advertising', domains[i], 'y', '')
-                            # emails = website.get_emails(response)
+                            emails = website.get_emails(response)
                             # valid_emails = [email for email in emails if
                             #                 mail.validate_email(email) == 250 or mail.validate_email(email) == 451]
-                            # if valid_emails:
-                            #     db.insert_into_db('emails', domains[i], ' '.join(valid_emails), '')
-                            website.get_facebook_url(db, response, domains[i])
+                            if emails:
+                                db.insert_into_db('emails', domains[i], ' '.join(emails), '')
+                            else:
+                                website.get_facebook_url(db, response, domains[i])
                             advertisement_web_driver = website.check_web_driver_existing(advertisement_web_driver)
                             advrtsmnt.find_advertisement(advertisement_web_driver, domains[i])
                             if i % 100 == 0:
@@ -376,7 +378,7 @@ def main():
                 else:
                     db.insert_into_db('status', domains[i], 'blocked', '')
             else:
-                db.insert_into_db('monthly_visits', domains[i], 'less_20thnd', '')
+                # db.insert_into_db('monthly_visits', domains[i], 'less_20thnd', '')
                 db.insert_into_db('status', domains[i], 'blocked', '')
         else:
             db.insert_into_db('existence', domains[i], 'n', '')
