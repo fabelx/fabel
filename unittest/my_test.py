@@ -6,31 +6,25 @@ import json
 from selenium import webdriver
 import fabel
 import time
-
+from fabel import making_logger
 sys.path.append(os.getcwd())
 
 
-class TestDatabase(unittest.TestCase):
-    pass
-    # def test_insert_domain(self):
-    #     db = fabel.DataBase('localhost', 'root', 'root01', 'fabel')
-    #     connector_db = db._connect_to_db()
-    #     self.assertEqual(db.insert_domain(connector_db, 8), 0)
-    #     self.assertEqual(db.insert_domain(connector_db, 'gg'), 0)
-    #     self.assertEqual(db.insert_domain(connector_db, 1), 0)
-    #     self.assertEqual(db.insert_domain(connector_db, 2), 0)
 
-    # def test_insert_into_db(self):
-    #     db = fabel.DataBase('localhost', 'root', 'root01', 'fabel')
-    #     # self.assertEqual(db.insert_into_db('googleads', 8, 'y'), 0)
-    #     # self.assertEqual(db.insert_into_db('advertising', 1, 'y'), 0)
-    #     self.assertEqual(db.insert_into_db('status', '%porno%', 'blocked'), 0)
-    #
+
+class TestDatabase(unittest.TestCase):
+    def test_insert_domain(self):
+        db = fabel.DataBase('localhost', 'root', 'root01', 'fabel', 'domains')
+        self.assertEqual(db.insert_new_domain('deccoria.pl'), False)
+        # self.assertEqual(db.insert_new_domain([44, 66]), False)
+
+
+    def test_insert_into_db(self):
+        db = fabel.DataBase('localhost', 'root', 'root01', 'fabel', 'domains')
+        self.assertEqual(db.insert_into_db('googleads', 'deccoria.pl', 'o', ''), False)
+
     def test_select_from_bd(self):
         db = fabel.DataBase('localhost', 'root', 'root01', 'fabel', 'domains')
-        # self.assertEqual(db.select_from_db('*', "WHERE domain LIKE 'linuxfdfhgrthdg-community.de'"), [])
-        # self.assertEqual(db.select_from_db('hh', "WHERE domain LIKE 'linuxfdfhgrthdg-community.de'"), None)
-        # self.assertEqual(db.select_from_db('domain', "WHERE domain LIKE 'linux-community.de'"), 'linux-community.de')
         self.assertEqual(db.select_from_db('domain', "WHERE domain LIKE '%.gov%' LIMIT 10"), [])
 
 

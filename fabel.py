@@ -2,6 +2,7 @@ import logging
 import smtplib
 import sys
 import time
+import typing
 
 import dns.resolver
 import mysql.connector
@@ -10,12 +11,23 @@ from mysql.connector import Error as MysqlError
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException, NoSuchElementException  # NoSuchWindowException
 
-logger = logging.getLogger('fabel_logger')
-console_handler = logging.StreamHandler()
-logger_form = logging.Formatter(fmt='{asctime}    :    {lineno}   :   {funcName}     :    {message}', style='{')
-logger.setLevel('ERROR')
-logger.addHandler(console_handler)
-console_handler.setFormatter(logger_form)
+
+def making_logger(handler, **kwargs):
+    """Example: logger = making_logger('file or console', name='name of your logger', level=LEVEL, filename='example.log')"""
+    if handler == 'console':
+        my_handler = logging.StreamHandler()
+    elif handler == 'file':
+        my_handler = logging.FileHandler(kwargs['filename'])
+    else:
+        print("The handler value you entered is not valid. Valid values: console or file.")
+        raise ValueError('handler = {}'.format(handler))
+    logger_format = logging.Formatter(fmt='{asctime}  :  {lineno}  :  {funcName}  :  {message}', style='{')
+    my_handler.setFormatter(logger_format)
+    my_log = logging.getLogger(kwargs['name'])
+    my_log.addHandler(my_handler)
+    my_log.setLevel(kwargs['level'])
+    my_log.propagate = False
+    return my_log
 
 
 class DataBase:
@@ -38,19 +50,21 @@ class DataBase:
             )
             return connector_db
         except MysqlError as er:
-            print('Fatal error ' + str(er))
+            console_logger.critical('Fatal error ' + str(er))  # raise
             sys.exit()
 
     def insert_new_domain(self, value):
         try:
             connector_db = self._connect_to_db()
             cursor_db = connector_db.cursor()
-            sql_query = "INSERT INTO {} (domain) VALUES %s".format(str(self._table))
-            cursor_db.execute(sql_query, (str(value).lower(),))
+            sql_query = f"INSERT INTO {self._table} (domain) VALUES ('{value.lower()}')"
+            cursor_db.execute(sql_query, )
             connector_db.commit()
             return True
         except (mysql.connector.errors.IntegrityError, mysql.connector.errors.DataError) as er:
-            logger.error(er)
+            file_logger.warning(
+                f"An error occurred while adding a new domain in the database. Domain: {value}. Error: {er}")
+            return False
 
     def insert_into_db(self, column, domain, value, requirement):
         try:
@@ -60,22 +74,22 @@ class DataBase:
             cursor_db.execute(sql_query, (value, str(domain).lower(),))
             connector_db.commit()
         except mysql.connector.errors.DatabaseError as er:
-            logger.error(er)
+            file_logger.warning(f"An insert error of value: {value} where domain is: {domain} Error: {er}")
+            return False
         return 0
 
-    def select_from_db(self, columns, requirement):
+    def select_from_db(self, columns, requirements):
         connector_db = self._connect_to_db()
         cursor_db = connector_db.cursor()
-        result = None
         try:
-            sql_query = "SELECT {} FROM {} {}".format(columns, str(self._table), requirement)
+            sql_query = f"SELECT {columns} FROM {self._table} {requirements}"
             cursor_db.execute(sql_query)
             result = cursor_db.fetchall()
+            return result
         except mysql.connector.errors.ProgrammingError as er:
-            print(er)
+            file_logger.warning(er)
         except mysql.connector.errors.InterfaceError as er:
-            print(er)
-        return result
+            file_logger.warning(er)
 
 
 class Website:
@@ -120,7 +134,7 @@ class Website:
             response = session.get(url, headers=headers, cookies=cookies)
             return response
         except (requests.exceptions.MissingSchema, requests.exceptions.ConnectionError, Exception) as er:
-            logger.error(er)
+            file_logger.warning(er)
 
     @staticmethod
     def get_monthly_visits(response):
@@ -138,7 +152,7 @@ class Website:
                 return False
             return True
         except (ValueError, KeyError) as er:
-            logger.error(er)
+            file_logger.warning(er)
             return True
 
     @staticmethod
@@ -147,7 +161,7 @@ class Website:
             facebook_url = response.json()['discover']['company']['facebookUrl']
             database.insert_into_db('facebook_url', domain, facebook_url, '')
         except (ValueError, KeyError) as er:
-            logger.error(er)
+            file_logger.warning(er)
 
     def get_emails(self, response):
         try:
@@ -156,7 +170,7 @@ class Website:
                       i < 4 and emails[i].split('@')[0] not in self._bad_mail_names]
             return emails
         except (ValueError, KeyError) as er:
-            logger.error(er)
+            file_logger.warning(er)
             return []
 
     def _search_for_advert_data(self, data):
@@ -195,13 +209,13 @@ class Website:
                 else:
                     return False
             except TypeError as er:
-                logger.error(er)
+                file_logger.error(er)
                 return False
             except NoSuchElementException as er:
-                logger.error(er)
+                file_logger.error(er)
                 web_driver.get(self._adbrainer_url)
             except Exception as er:
-                logger.error(er, exc_info=True)
+                file_logger.warning(er, exc_info=True)
                 sys.exit()
 
     def check_web_driver_existing(self, web_driver):
@@ -209,7 +223,7 @@ class Website:
             if web_driver.window_handles:
                 return web_driver
         except WebDriverException as er:
-            logger.error(er)
+            file_logger.error(er)
             return self.run_web_driver_for_adbrainer()
 
 
@@ -228,7 +242,7 @@ class Email(Website):
             mx_record = str(records[0].exchange)
             return mx_record
         except Exception as er:
-            logger.error(er)
+            file_logger.warning(er)
 
     def _smtp_query(self, server, mx_record, email_address):
         try:
@@ -242,13 +256,13 @@ class Email(Website):
             else:
                 return code
         except smtplib.SMTPServerDisconnected as er:
-            logger.error(er)
+            file_logger.warning(er)
             return 250
         except TimeoutError as er:
-            logger.error(er)
+            file_logger.warning(er)
             return 1000
         except Exception as er:
-            logger.error(er, exc_info=True)
+            file_logger.warning(er, exc_info=True)
             return 400
 
     def validate_email(self, email_address):
@@ -262,7 +276,7 @@ class Email(Website):
                 status_code = self._smtp_query(server, mx_record, email_address)
             return status_code
         except ValueError as er:
-            logger.error(er)
+            file_logger.warning(er)
 
 
 class Advertisement:
@@ -286,7 +300,7 @@ class Advertisement:
                     flag = 'google ads'
                     return flag
             except Exception as er:
-                logger.error(er)
+                file_logger.warning(er)
                 flag = 'error click'
         return flag
 
@@ -298,10 +312,10 @@ class Advertisement:
             result = self._analyze_iframes(iframes)
             self._update_advertisement_info(domain, result)
         except WebDriverException as er:
-            logger.error(er)
+            file_logger.warning(er)
             self.database.insert_into_db('existence', domain, 'n', '')
         except Exception as er:
-            logger.error(er, exc_info=True)
+            file_logger.warning(er, exc_info=True)
 
     def _update_advertisement_info(self, domain, result):
         if result == 'asw':
@@ -341,10 +355,10 @@ def main():
             try:
                 response = website.request('{}{}'.format(website.simtech_ajax_url, domains[i]), website.simtech_headers,
                                            website.simtech_cookies)
-                print(domains[i])
+                console_logger.info(domains[i])
                 break
             except AttributeError as er:
-                logger.error(er)
+                file_logger.error(er)
         if response:
             monthly_visits = website.get_monthly_visits(response)
             if monthly_visits > 100000 and website.get_country_flag(db, response, domains[i]):
@@ -378,7 +392,6 @@ def main():
                 else:
                     db.insert_into_db('status', domains[i], 'blocked', '')
             else:
-                # db.insert_into_db('monthly_visits', domains[i], 'less_20thnd', '')
                 db.insert_into_db('status', domains[i], 'blocked', '')
         else:
             db.insert_into_db('existence', domains[i], 'n', '')
@@ -388,4 +401,6 @@ def main():
 
 
 if __name__ == '__main__':
+    console_logger = making_logger('console', name='console_logger', level='INFO')
+    file_logger = making_logger('file', name='file_logger', level='WARNING', filename='main_fabel.log')
     main()
