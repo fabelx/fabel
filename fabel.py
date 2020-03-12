@@ -1,8 +1,9 @@
+# import typing
+import json
 import logging
 import smtplib
 import sys
 import time
-import typing
 
 import dns.resolver
 import mysql.connector
@@ -97,33 +98,20 @@ class Website:
                  'simtech_cookies', 'simtech_ajax_url', '_bad_country_flags',)
 
     def __init__(self):
-        self._headers = {'accept': '*/*',
-                         'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0'}
-        self._key_words = ('added', 'removed',)
-        self._country_flags = ('UK', 'US', 'CA', 'AU', 'NZ',)
-        self._bad_country_flags = ('CN', 'BD',)
-        self._adbrainer_url = 'https://dashboard.adbrainer.com/main/dashboard?token=f0fe34639af4c2587ec33f37346e15ba'
-        self._bad_mail_names = ('abuse', 'noreply', 'no-reply', 'legal',)
-        self.simtech_headers = {'Host': 'www.similartech.com',
-                                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0',
-                                'Accept': 'application/json, text/javascript, */*; q=0.01',
-                                'Accept-Language': 'ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3',
-                                'Accept-Encoding': 'gzip, deflate, br',
-                                'X-Request-Verification-Token': 'JRRUwY6F9Dt-tDGd9WYmrhDOGwaYX7zfo10NNsdq08TCxmfVVLXoBxyMhrejZWW7ZAt2ZNbGp86QS_k14AUcDjzbcR4aCMHPdLyzq-Lbsx5V3m0n0',
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'DNT': '1',
-                                'Connection': 'keep-alive',
-                                'Referer': 'https://www.similartech.com/dashboard/websites/analysis/url/techrepublic.com'}
-        self.simtech_cookies = {"__hssc": "34316798.4.1582931738811", "__hssrc": "1",
-                                "__hstc": "34316798.216d97b46808af3d69aeef29dde0d74a.1582931738811.1582931738811.1582931738811.1",
-                                "__RequestVerificationToken": "k-F4nWsmicPA_xC6xgOxnOtFFZ9DuhpfKUqP50dz5T-ME98kOde_KHsp0o6cOlN6PcCpVUjvRIC1RWWqY-0xyW4pzkw1",
-                                "_ga": "GA1.2.1975797809.1582931738", "_gat": "1", "_gid": "GA1.2.567801510.1582931738",
-                                ".SAUTH": "F8B699DFC4504369102396CCC68192EE289F31519C31D0C8F481B6D1D92771257CC5882561FF77D948D636235F1C2FB79071865DA40601B894AB56FCF6E609B38FE3A929A36FFB83B9876B9B1C965DA593644F2C1DCC4890D7BF71ADD6738DEA4C587269BFDF2377211D650A81FA69AE327446615C1F9AAD0650666BFC2FD46DC23E00DC9FCC741CA61ECD2D21671D6352FA0DD6",
-                                "cookieconsent_status": "dismiss", "hsfirstvisit": "",
-                                "hubspotutk": "216d97b46808af3d69aeef29dde0d74a", "initialLP": "/",
-                                "initialReferrer": "", "sessionLP": "/", "sessionReferrer": "",
-                                "SGSS": "e0e42fd7-a727-4f7b-9999-16256ffc9b06"}
-        self.simtech_ajax_url = 'https://www.similartech.com/api/websites/analysis?site='
+        conf_data = self.__init_conf__()
+        self._headers = conf_data['website']['headers']
+        self._key_words = conf_data['website']['key_words']
+        self._country_flags = conf_data['website']['country_flags']
+        self._bad_country_flags = conf_data['website']['bad_country_flags']
+        self._adbrainer_url = conf_data['website']['adbrainer_url']
+        self._bad_mail_names = conf_data['website']['bad_mail_names']
+        self.simtech_headers = conf_data['website']['simtech_headers']
+        self.simtech_cookies = conf_data['website']['simtech_cookies']
+        self.simtech_ajax_url = conf_data['website']['simtech_ajax_url']
+
+    def __init_conf__(self):
+        with open('conf.json', 'r') as f:
+            return json.load(f)
 
     @staticmethod
     def request(url, headers, cookies):

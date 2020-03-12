@@ -1,0 +1,61 @@
+{
+  "website": {
+    "headers": {
+      "accept": "*/*",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0"
+    },
+    "key_words": [
+      "added",
+      "removed"
+    ],
+    "country_flags": [
+      "UK",
+      "US",
+      "CA",
+      "AU",
+      "NZ"
+    ],
+    "bad_country_flags": [
+      "CN",
+      "BD"
+    ],
+    "adbrainer_url": "https://dashboard.adbrainer.com/main/dashboard?token=f0fe34639af4c2587ec33f37346e15ba",
+    "bad_mail_names": [
+      "abuse",
+      "noreply",
+      "no-reply",
+      "legal"
+    ],
+    "simtech_headers": {
+      "Host": "www.similartech.com",
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0",
+      "Accept": "application/json, text/javascript, */*; q=0.01",
+      "Accept-Language": "ru-RU,ru;q=0.8,en-US;q=0.5,en;q=0.3",
+      "Accept-Encoding": "gzip, deflate, br",
+      "X-Request-Verification-Token": "nJkxU5chB-T6jmVJiKbGOckESCBRA-Cdf88GO9uDB1a7TCkO69jIOnqGCX0q_3V4aVzPkJfTlXoLSHf_tuYWFrik9yu5O20tMZDKwh6ueJDNKvZ80",
+      "X-Requested-With": "XMLHttpRequest",
+      "DNT": "1",
+      "Connection": "keep-alive",
+      "Referer": "https://www.similartech.com/dashboard/websites/analysis/url/techrepublic.com"
+    },
+    "simtech_cookies": {
+      "__hssc": "34316798.3.1583974360306",
+      "__hssrc": "1",
+      "__hstc": "34316798.173c1520f9789bd4e003ba8ad9d2207b.1583974360306.1583974360306.1583974360306.1",
+      "__RequestVerificationToken": "yQPCOqC7pZo9QgoAhAxOdz7iexeuOzH8kRASRZ1Y14y2KUByZjCtUMiHh1V04fWkBJb--DE9ueSvm-B-rUcqh7Wcc181",
+      "_ga": "GA1.2.490041855.1583974356",
+      "_gat": "1",
+      "_gid": "GA1.2.1105138601.1583974356",
+      ".SAUTH": "2669F93B5B19755847E6E4F277F28A8225F8A87D88A5254F0E1E7C23FC7BFAC8E4012F6BB8611414677633885642E2D39F130366EE793375610BC6E3001A10D2EE512AE2EA87F84584BDA4F0978C5EABAF0D292E056B9D1263B98D09893EC72EA883894E65467371A9E494589B730A4649105DB91CA90F31032D57479C94F23B0D37798DC905034E8F6678667A64624B56D4830A",
+      "cookieconsent_status": "dismiss",
+      "hsfirstvisit": "",
+      "hubspotutk": "173c1520f9789bd4e003ba8ad9d2207b",
+      "initialLP": "/dashboard/technologies/reports?callback=joined",
+      "initialReferrer": "",
+      "sessionLP": "/dashboard/technologies/reports?callback=joined",
+      "sessionReferrer": "",
+      "SGSS": "45d69754-11b2-4747-89d0-10745a9ed067"
+    },
+    "simtech_ajax_url": "https://www.similartech.com/api/websites/analysis?site="
+  }
+}
